@@ -14,8 +14,9 @@ public class PlayerControls : MonoBehaviour
     GameManager gameManager;
     private Transform myTransform;
     private Vector3 playerPosition;
-    public float walkSpeed = 2.0f;
-    public float runSpeed = 4.0f;
+    public float walkSpeed = 3.0f;
+    public float originalWalkSpeed = 3.0f;
+    public float runSpeed = 5.0f;
 
     public float distanceToGround;
     public float jumpForce = 200.0f;
@@ -126,7 +127,7 @@ public class PlayerControls : MonoBehaviour
 
         if (Input.GetKeyUp("left shift") && CheckGrounded())
         {
-            walkSpeed = walkSpeed;
+            walkSpeed = originalWalkSpeed;
         }
     }
      
