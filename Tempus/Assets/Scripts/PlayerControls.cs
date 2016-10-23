@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class PlayerControls : MonoBehaviour
 {
@@ -28,6 +29,14 @@ public class PlayerControls : MonoBehaviour
     
     CameraRotate camRot;
 
+    BWEffect bWEffect;
+
+    BlueCube blueCube;
+
+    LeftElevatorDoor leftDoor;
+
+    public GameObject target;
+
     int xpos = (Screen.width) / 2;
     int ypos = (Screen.height) / 2;
 
@@ -37,6 +46,10 @@ public class PlayerControls : MonoBehaviour
         Cursor.visible = false;
 
         camRot = GetComponentInChildren<CameraRotate>();
+
+        leftDoor = GameObject.FindGameObjectWithTag("Leftdoor").GetComponent<LeftElevatorDoor>();
+
+        blueCube = GameObject.FindGameObjectWithTag("Bluecube").GetComponent<BlueCube>();
 
         myTransform = this.transform;
 
@@ -50,15 +63,20 @@ public class PlayerControls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Movement();
+        //if the elevator doors are open then movement is activated
+        if (leftDoor.activateMovement == true)
+        {
+            Movement();
+        }
 
-        CameraRotation();      
+        //calls camera looking
+        CameraRotation();
 
-        pausing();
-                
-        Object.DontDestroyOnLoad(transform.gameObject);
+        //raycast for objects
+        interactRaycast();          
     }
 
+    //looking left and right
     void CameraRotation()
     {
         float mouseX = Input.GetAxis("Mouse X");
@@ -72,7 +90,7 @@ public class PlayerControls : MonoBehaviour
 
     void Movement()
     {
-        //Movement: Left and Right
+        //move Left
         if (Input.GetKey("a"))
         {
             if (CheckGrounded())
@@ -83,6 +101,7 @@ public class PlayerControls : MonoBehaviour
             else transform.position -= transform.right * walkSpeed * Time.deltaTime;            
         }
 
+        //move right
         if (Input.GetKey("d"))
         {
             if (CheckGrounded())
@@ -93,6 +112,7 @@ public class PlayerControls : MonoBehaviour
             else transform.position += transform.right * walkSpeed * Time.deltaTime;            
         }
 
+        //move backwards
         if (Input.GetKey("s"))
         {
             if (CheckGrounded())
@@ -103,6 +123,7 @@ public class PlayerControls : MonoBehaviour
             else transform.position -= transform.forward * walkSpeed * Time.deltaTime;
         }
 
+        //move forward
         if (Input.GetKey("w"))
         {
             if (CheckGrounded())
@@ -112,7 +133,8 @@ public class PlayerControls : MonoBehaviour
             
             else transform.position += transform.forward * walkSpeed * Time.deltaTime;
         }
-
+        
+        //jump
         if (Input.GetKeyDown("space") && CheckGrounded())
         {
             Debug.Log("jumping");
@@ -120,17 +142,54 @@ public class PlayerControls : MonoBehaviour
             hasJumped = true;
         }        
 
+        //start sprinting
         if (Input.GetKey("left shift") && CheckGrounded())
         {
             walkSpeed = runSpeed;
         }
 
+        //stop sprinting
         if (Input.GetKeyUp("left shift") && CheckGrounded())
         {
             walkSpeed = originalWalkSpeed;
         }
     }
+
+    public void interactRaycast()
+    {
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, transform.forward, out hit, 2f))
+        {
+            Debug.DrawLine(transform.position, hit.point, Color.green);
+            //hit object
+            if (hit.transform.tag == "Bluecube")
+            {
+                blueCube.text.enabled = true;
+
+                if (Input.GetKeyDown("e"))
+                {
+                    bWEffect.enabled = false;
+                    blueCube.text.enabled = false;
+                    blueCube.dialogueText.enabled = true;
+                    blueCube.blueCubeNarration.enabled = true;
+                }
+                Debug.DrawLine(transform.position, hit.point, Color.green);
+            }
+
+            if (hit.transform.tag == "Redcube")
+            {
+                Debug.DrawLine(transform.position, hit.point, Color.green);
+            }
+
+            if (hit.transform.tag == "Greencube")
+            {
+                Debug.DrawLine(transform.position, hit.point, Color.green);
+            }
+        }
+    }
      
+    //Checking if grounded for jumping
     public bool CheckGrounded()
     {
         if(Physics.Raycast(myTransform.position, -Vector3.up, 2f))
@@ -140,57 +199,8 @@ public class PlayerControls : MonoBehaviour
         }
         else return false;
     }    
-           
-    public void pausing()
-    {
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            Cursor.visible = false;
-            paused = togglePause();
-        }
-            
-    }
-
-    void OnGUI()
-    {
-        if (paused)
-        {
-            camRot.verticalMouseSensitivity = 0;
-            Cursor.visible = true;
-            if (GUI.Button(new Rect(xpos - 50, ypos- 150, 100, 30), "Resume"))
-            {                
-                paused = togglePause();
-                Cursor.visible = false;
-            }
-
-            if (GUI.Button(new Rect(xpos - 50, ypos - 100, 100, 30), "Main Menu"))
-            {
-                paused = togglePause();                
-                Application.LoadLevel("Main Menu");
-                Destroy(this.gameObject, 0.1f);
-            }
-
-            if (GUI.Button(new Rect(xpos - 50, ypos - 50, 100, 30), "Invert Look"))
-            {
-                invertMouse = invertingMouse();
-            }
-        }
-    }
-
-    bool togglePause()
-    {
-        if (Time.timeScale == 0f)
-        {
-            Time.timeScale = 1f;
-            return (false);
-        }
-        else
-        {
-            Time.timeScale = 0f;
-            return (true);
-        }
-    }
-
+   
+    //DOES NOT WORK PLS FIX FOR THE SCRUBS THE THAT NEED IT?    
     bool invertingMouse()
     {
         if(camRot.verticalMouseSensitivity > 0)
