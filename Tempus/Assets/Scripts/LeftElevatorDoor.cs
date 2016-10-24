@@ -37,7 +37,7 @@ public class LeftElevatorDoor : MonoBehaviour {
 
             if (canRunGrey == true)
             {
-                bWEffect.intensity += 0.005f;
+                bWEffect.intensity += 0.0055f;
             }               
         }
 

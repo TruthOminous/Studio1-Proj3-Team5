@@ -51,6 +51,8 @@ public class PlayerControls : MonoBehaviour
 
         blueCube = GameObject.FindGameObjectWithTag("Bluecube").GetComponent<BlueCube>();
 
+        bWEffect = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<BWEffect>();
+
         myTransform = this.transform;
 
         Vector3 rot = transform.localRotation.eulerAngles;
