@@ -53,6 +53,7 @@
      <Compile Include="Assets\Scripts\PlayerControls.cs" />
      <Compile Include="Assets\Scripts\PlayerUI.cs" />
      <Compile Include="Assets\Scripts\RightElevatorDoor.cs" />
+     <Compile Include="Assets\Scripts\Sun.cs" />
      <None Include="Assets\Shaders\BWDiffuse.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
